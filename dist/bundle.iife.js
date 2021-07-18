@@ -30,19 +30,20 @@ var Wave = (function () {
     element.crossOrigin = 'anonymous';
 
     function run () {
+      const self = this;
       // user gesture has happened
-      this.activated = true;
+      self.activated = true;
 
       // track current wave for canvas
-      this.activeCanvas = this.activeCanvas || {};
-      this.activeCanvas[canvasId] = JSON.stringify(options);
+      self.activeCanvas = self.activeCanvas || {};
+      self.activeCanvas[canvasId] = JSON.stringify(options);
 
       // track elements used so multiple elements use the same data
-      this.activeElements[elementId] = this.activeElements[elementId] || {};
-      if (this.activeElements[elementId].count) this.activeElements[elementId].count += 1;
-      else this.activeElements[elementId].count = 1;
+      self.activeElements[elementId] = self.activeElements[elementId] || {};
+      if (self.activeElements[elementId].count) self.activeElements[elementId].count += 1;
+      else self.activeElements[elementId].count = 1;
 
-      const currentCount = this.activeElements[elementId].count;
+      const currentCount = self.activeElements[elementId].count;
 
       const audioCtx = setGlobal(element.id, 'audioCtx', new AudioContext());
       const analyser = setGlobal(element.id, 'analyser', audioCtx.createAnalyser());
@@ -74,7 +75,7 @@ var Wave = (function () {
 
       function renderFrame () {
         // only run one wave visual per canvas
-        if (JSON.stringify(options) !== this.activeCanvas[canvasId]) {
+        if (JSON.stringify(options) !== self.activeCanvas[canvasId]) {
           return
         }
 
@@ -85,15 +86,14 @@ var Wave = (function () {
         frameCount++;
 
         // check if this element is the last to be called
-        if (!(currentCount < this.activeElements[elementId].count)) {
+        if (!(currentCount < self.activeElements[elementId].count)) {
           analyser.getByteFrequencyData(data);
-          this.activeElements[elementId].data = data;
+          self.activeElements[elementId].data = data;
         }
 
-        this.visualize(this.activeElements[elementId].data, canvasId, options, frameCount);
+        self.visualize(self.activeElements[elementId].data, canvasId, options, frameCount);
       }
 
-      renderFrame = renderFrame.bind(this);
       renderFrame();
     }
 
