@@ -23,7 +23,8 @@
   "author": "Austin Michaud",
   "license": "MIT",
   "files": [
-    "dist/bundle.cjs.js"
+    "dist/bundle.cjs.js",
+    "dist/bundle.iife.js"
   ],
   "homepage": "https://foobar404.github.io/Wave.js/#/",
   "repository": {
@@ -34,13 +35,8 @@
     "url": "https://github.com/foobar404/Wave.js/issues"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.4",
-    "@babel/preset-env": "^7.10.4",
-    "@rollup/plugin-babel": "^5.0.4",
-    "origamijs": "^0.5.1",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-terser": "^6.1.0",
     "watch": "^1.0.2"
   },
   "dependencies": {}

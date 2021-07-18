@@ -1,5 +1,8 @@
-# [Wave.js](https://foobar404.github.io/Wave.js/#/)
+# This is an opinionated fork of [Wave.js](https://foobar404.github.io/Wave.js/#/)
+I have no intent of upstreaming this, though if you see anything you like I'm
+happy to make a proper PR from a clean fork.
 
+## From original README
 Audio visualizer library for javascript
 (20+ designs).
 
@@ -8,8 +11,8 @@ Audio visualizer library for javascript
 [LIVE EXAMPLES](https://foobar404.github.io/Wave.js/#/)
 
 
-# Installation 
- 
+# Installation
+
 <h3>Install With CDN</h3>
 
 ```html

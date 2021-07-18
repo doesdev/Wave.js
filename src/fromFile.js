@@ -1,89 +1,79 @@
-export default function fromFile(file, options = {}) {
-    //options
-    if (!options.stroke) options.stroke = 10;
+export default function fromFile (file, options = {}) {
+  const { Audio, AudioContext } = window
 
-    let audio = new Audio();
-    audio.src = file;
+  if (!options.stroke) options.stroke = 10
 
-    let audioCtx = new AudioContext();
-    let analyser = audioCtx.createAnalyser();
+  const audio = new Audio()
+  audio.src = file
 
-    let source = audioCtx.createMediaElementSource(audio);
-    source.connect(analyser);
+  const audioCtx = new AudioContext()
+  const analyser = audioCtx.createAnalyser()
 
-    analyser.fftSize = 64;
-    let bufferLength = analyser.frequencyBinCount;
+  const source = audioCtx.createMediaElementSource(audio)
+  source.connect(analyser)
 
-    let file_data;
-    let temp_data = new Uint8Array(bufferLength);
-    let getWave;
-    let fdi = 0;
-    let self = this;
+  analyser.fftSize = 64
+  const bufferLength = analyser.frequencyBinCount
 
-    audio.addEventListener('loadedmetadata', async function () {
+  let fileData
+  const tempData = new Uint8Array(bufferLength)
+  let getWave
+  let fdi = 0
+  const self = this
 
-        while (audio.duration === Infinity) {
-            await new Promise(r => setTimeout(r, 1000));
-            audio.currentTime = 10000000 * Math.random();
-        }
-
-        audio.currentTime = 0;
-        audio.play();
-    })
-
-    audio.onplay = function () {
-        let findSize = (size) => {
-
-            for (let range = 1; range <= 40; range++) {
-                let power = 2 ** range;
-
-                if (size <= power) return power;
-            }
-
-        }
-        let d = audio.duration;
-        audio.playbackRate = 16;
-
-        d = d / audio.playbackRate;
-
-        let drawRate = 20; //ms
-
-        let size = ((d / (drawRate / 1000)) * (analyser.fftSize / 2));
-        size = findSize(size);
-        file_data = new Uint8Array(size);
-
-
-        getWave = setInterval(function () {
-            analyser.getByteFrequencyData(temp_data);
-
-            for (let data in temp_data) {
-                data = temp_data[data];
-                file_data[fdi] = data;
-                fdi++;
-            }
-
-        }, drawRate);
-
-
+  audio.addEventListener('loadedmetadata', async function () {
+    while (audio.duration === Infinity) {
+      await new Promise((resolve, reject) => setTimeout(resolve, 1000))
+      audio.currentTime = 10000000 * Math.random()
     }
 
-    audio.onended = function () {
+    audio.currentTime = 0
+    audio.play()
+  })
 
-        if (audio.currentTime === audio.duration && file_data !== undefined) {
+  audio.onplay = function () {
+    const findSize = (size) => {
+      for (let range = 1; range <= 40; range++) {
+        const power = 2 ** range
 
-            clearInterval(getWave);
-
-            let canvas = document.createElement("canvas");
-            canvas.height = window.innerHeight;
-            canvas.width = window.innerWidth;
-
-            self.visualize(file_data, canvas, options);
-            let image = canvas.toDataURL("image/jpg");
-            self.onFileLoad(image);
-
-            canvas.remove();
-        }
-
+        if (size <= power) return power
+      }
     }
+    let d = audio.duration
+    audio.playbackRate = 16
 
+    d = d / audio.playbackRate
+
+    const drawRate = 20 // ms
+
+    let size = ((d / (drawRate / 1000)) * (analyser.fftSize / 2))
+    size = findSize(size)
+    fileData = new Uint8Array(size)
+
+    getWave = setInterval(function () {
+      analyser.getByteFrequencyData(tempData)
+
+      for (let data in tempData) {
+        data = tempData[data]
+        fileData[fdi] = data
+        fdi++
+      }
+    }, drawRate)
+  }
+
+  audio.onended = function () {
+    if (audio.currentTime === audio.duration && fileData !== undefined) {
+      clearInterval(getWave)
+
+      const canvas = document.createElement('canvas')
+      canvas.height = window.innerHeight
+      canvas.width = window.innerWidth
+
+      self.visualize(fileData, canvas, options)
+      const image = canvas.toDataURL('image/jpg')
+      self.onFileLoad(image)
+
+      canvas.remove()
+    }
+  }
 }

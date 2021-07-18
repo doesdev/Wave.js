@@ -1,10 +1,10 @@
-import React from 'react';
-import Wave from "./Wave"
+import React from 'react'
+import Wave from './Wave'
 
-function App() {
+function App () {
   return (
-    <Wave></Wave>
-  );
+    <Wave />
+  )
 }
 
-export default App;
+export default App
