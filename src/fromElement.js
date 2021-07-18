@@ -86,9 +86,12 @@ export default function fromElement (elementId, canvasId, options) {
       }
 
       // if the element or canvas go out of scope, stop animation
-      if (!document.body.contains(element) || !document.body.contains(canvas)) {
-        return
-      }
+      const canvasVisible = (canvas
+        ? document.body.contains(canvas)
+        : document.getElementById(canvasId)
+      )
+
+      if (!document.body.contains(element) || !canvasVisible) return
 
       requestAnimationFrame(renderFrame)
       frameCount++
