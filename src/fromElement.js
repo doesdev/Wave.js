@@ -1,6 +1,16 @@
 export default function fromElement (elementId, canvasId, options) {
   const { HTMLElement, AudioContext, requestAnimationFrame } = window
   const globalAccessKey = [options.globalAccessKey || '$wave']
+  const isAudioElement = elementId instanceof HTMLElement
+  const element = isAudioElement ? elementId : document.getElementById(elementId)
+  const isCanvasElement = canvasId instanceof HTMLElement
+  const canvas = isCanvasElement && canvasId
+
+  if (!element) return
+
+  if (isAudioElement) elementId = `${Date.now()}-${Math.random().toString(36)}`
+  if (isCanvasElement) canvasId = `${Date.now()}-${Math.random().toString(36)}`
+
   const initGlobalObject = (elementId) => {
     window[globalAccessKey] = window[globalAccessKey] || {}
     window[globalAccessKey][elementId] = window[globalAccessKey][elementId] || {}
@@ -21,9 +31,7 @@ export default function fromElement (elementId, canvasId, options) {
   }
 
   const waveContext = this
-  const isElement = elementId instanceof HTMLElement
-  const element = isElement ? elementId : document.getElementById(elementId)
-  if (!element) return
+
   element.crossOrigin = 'anonymous'
 
   function run () {
@@ -37,15 +45,15 @@ export default function fromElement (elementId, canvasId, options) {
 
     // track elements used so multiple elements use the same data
     self.activeElements[elementId] = self.activeElements[elementId] || {}
-    if (self.activeElements[elementId].count) self.activeElements[elementId].count += 1
-    else self.activeElements[elementId].count = 1
 
-    const currentCount = self.activeElements[elementId].count
+    const oldCount = self.activeElements[elementId].count || 0
+    const currentCount = self.activeElements[elementId].count = oldCount + 1
 
     const audioCtx = setGlobal(element.id, 'audioCtx', new AudioContext())
     const analyser = setGlobal(element.id, 'analyser', audioCtx.createAnalyser())
 
     let source = getGlobal(element.id, 'source')
+
     if (source) {
       if (source.mediaElement !== element) {
         source = audioCtx.createMediaElementSource(element)
@@ -53,6 +61,7 @@ export default function fromElement (elementId, canvasId, options) {
     } else {
       source = audioCtx.createMediaElementSource(element)
     }
+
     setGlobal(element.id, 'source', source)
 
     // beep test for ios
@@ -77,7 +86,9 @@ export default function fromElement (elementId, canvasId, options) {
       }
 
       // if the element or canvas go out of scope, stop animation
-      if (!document.getElementById(elementId) || !document.getElementById(canvasId)) { return }
+      if (!document.body.contains(element) || !document.body.contains(canvas)) {
+        return
+      }
 
       requestAnimationFrame(renderFrame)
       frameCount++
@@ -88,7 +99,13 @@ export default function fromElement (elementId, canvasId, options) {
         self.activeElements[elementId].data = data
       }
 
-      self.visualize(self.activeElements[elementId].data, canvasId, options, frameCount)
+      self.visualize(
+        self.activeElements[elementId].data,
+        canvasId,
+        options,
+        frameCount,
+        canvas
+      )
     }
 
     renderFrame()

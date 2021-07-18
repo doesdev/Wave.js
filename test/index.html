@@ -120,7 +120,7 @@
             div.appendChild(canvas)
             main.appendChild(div)
 
-            wave.fromElement("audio", id, {
+            wave.fromElement(document.getElementById("audio"), canvas, {
                 type: visual
             })
 

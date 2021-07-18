@@ -21,14 +21,16 @@ import drawWeb from './visuals/drawWeb.js'
 import drawStitches from './visuals/drawStitches.js'
 
 // options:type,colors,stroke
-export default function visualize (data, canvasId, options = {}, frame) {
+export default function visualize (data, canvasId, options = {}, frame, canvasEl) {
   // make a clone of options
   options = { ...options }
   // options
   if (!options.stroke) options.stroke = 1
   if (!options.colors) options.colors = ['#d92027', '#ff9234', '#ffcd3c', '#35d0ba']
 
-  const canvas = document.getElementById(canvasId)
+  const { HTMLElement } = window
+  const hasElement = canvasEl instanceof HTMLElement
+  const canvas = hasElement ? canvasEl : document.getElementById(canvasId)
 
   if (!canvas) return
 
