@@ -7,10 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npx npm-run-all --parallel server watch",
-    "server": "npx http-server ./ -o ./test/index.html -c-1",
-    "build": "npx rollup -c",
-    "watch": "npx watch \"npm run build\" ./src"
+    "test": "npm-run-all --parallel server watch",
+    "server": "http-server ./ -o ./test/index.html -c-1",
+    "build": "rollup -c",
+    "watch": "watch \"npm run build\" ./src"
   },
   "keywords": [
     "audio",
